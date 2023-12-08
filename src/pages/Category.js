@@ -191,9 +191,7 @@ const Category = () => {
   };
 
   // Use the useEffect hook to fetch the categories when the component mounts
-  useEffect(() => {
-    fetchCategories();
-  }, []);
+  useEffect(() => {fetchCategories();}, []);
 
   // Return the JSX for the category component
   return (
