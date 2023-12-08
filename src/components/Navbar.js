@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import UserMenu from './UserMenu';
+
 
 // Create styled elements using Styled Components
 const NavbarContainer = styled.div`
@@ -45,7 +45,6 @@ const Navbar = () => {
         <Logo>E-commerce</Logo>
         <SearchInput type="text" placeholder="Search products..." />
         {/* Import and render the user menu component */}
-        <UserMenu />
         <UserIcon src="user.jpg" alt="User" />
       </NavbarContainer>
     );
