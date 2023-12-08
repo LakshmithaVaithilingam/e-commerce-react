@@ -113,7 +113,7 @@ const Category = () => {
     formState: { errors },
   } = useForm();
 
-  // Create a function to fetch the categories from the API
+  /*// Create a function to fetch the categories from the API
   const fetchCategories = async () => {
     try {
       // Make a GET request to the API endpoint
@@ -122,7 +122,25 @@ const Category = () => {
       setCategories(response.data);
     } catch (error) {
       // Handle the error
-      console.error(error);
+      console.error('Axios Error:', error);
+    }
+  };*/
+
+  const fetchCategories = async () => {
+    try {
+      // Make a GET request to the API endpoint
+      const response = await axios.get('http://localhost:8000/api/category');
+      // Set the categories state with the response data
+      setCategories(response.data);
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response && error.response.status === 404) {
+        // Handle the 404 response (No Records Found)
+        console.warn('No records found.');
+        setCategories([]); // Set an empty array in the state
+      } else {
+        // Handle other errors
+        console.error('Axios Error:', error);
+      }
     }
   };
 
