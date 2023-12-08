@@ -148,7 +148,7 @@ const Category = () => {
         );
         // Update the categories state with the updated category
         setCategories(
-          categories.map(category =>
+          Array.isArray(categories) && categories.map((category) =>
             category.id === selectedCategory.id ? response.data : category
           )
         );
