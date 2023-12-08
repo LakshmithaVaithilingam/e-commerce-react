@@ -113,7 +113,7 @@ const Category = () => {
     formState: { errors },
   } = useForm();
 
-  // Create a function to fetch the categories from the API
+  /*// Create a function to fetch the categories from the API
   const fetchCategories = async () => {
     try {
       // Make a GET request to the API endpoint
@@ -126,9 +126,27 @@ const Category = () => {
       // Handle the error
       console.error('Axios Error:', error);
     }
+  };*/
+
+  const fetchCategories = async () => {
+    try {
+      // Make a GET request to the API endpoint
+      const response = await fetch('http://localhost:8000/api/category');
+      const data = await response.json();
+      // Set the categories state with the response data
+      if (data.status === 200) {
+        setCategories(data.categories); // Update form data with fetched admin
+      } else {
+        console.error('Error fetching admin by ID:', data.message);
+      }
+      //setCategories(response.data);
+    } catch (error) {
+      console.error('Error fetching admin by ID:', error);
+    }
   };
 
-  // Create a function to handle the form submission
+  useEffect(() => {fetchCategories();}, []);
+
   const onSubmit = async data => {
     try {
       // Check the mode of the form
@@ -138,21 +156,36 @@ const Category = () => {
           'http://localhost:8000/api/category',
           data
         );
-        // Add the new category to the categories state
-        setCategories([...categories, response.data]);
+  
+        // Check if the response has category data
+        if (response.data && response.data.category) {
+          // Add the new category to the categories state
+          setCategories([...categories, response.data.category]);
+        } else {
+          console.error('Invalid response from the server:', response.data);
+          // Handle the error or provide user feedback
+        }
       } else if (formMode === 'update') {
         // Make a PUT request to the API endpoint with the form data and the selected category id
         const response = await axios.put(
           `http://localhost:8000/api/category/${selectedCategory.id}/edit`,
           data
         );
-        // Update the categories state with the updated category
-        setCategories(
-          Array.isArray(categories) && categories.map((category) =>
-            category.id === selectedCategory.id ? response.data : category
-          )
-        );
+  
+        // Check if the response has category data
+        if (response.data && response.data.category) {
+          // Update the categories state with the updated category
+          setCategories(
+            Array.isArray(categories) && categories.map((category) =>
+              category.id === selectedCategory.id ? response.data.category : category
+            )
+          );
+        } else {
+          console.error('Invalid response from the server:', response.data);
+          // Handle the error or provide user feedback
+        }
       }
+  
       // Reset the form
       reset();
       // Set the form mode to 'create'
@@ -164,6 +197,7 @@ const Category = () => {
       console.error(error);
     }
   };
+  
 
   // Create a function to handle the edit button click
   const handleEdit = category => {
@@ -191,7 +225,7 @@ const Category = () => {
   };
 
   // Use the useEffect hook to fetch the categories when the component mounts
-  useEffect(() => {fetchCategories();}, []);
+  //useEffect(() => {fetchCategories();}, []);
 
   // Return the JSX for the category component
   return (

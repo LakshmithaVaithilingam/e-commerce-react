@@ -3,7 +3,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
-
 // Create styled elements using Styled Components
 const NavbarContainer = styled.div`
   display: flex;
