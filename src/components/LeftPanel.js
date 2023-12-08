@@ -43,28 +43,10 @@ const LeftPanel = () => {
       <LeftPanelTitle>Admin Panel</LeftPanelTitle>
       <LeftPanelList>
         <LeftPanelItem>
-          <LeftPanelLink to="/dashboard">Dashboard</LeftPanelLink>
-        </LeftPanelItem>
-        <LeftPanelItem>
           <LeftPanelLink to="/product-management">Product Management</LeftPanelLink>
         </LeftPanelItem>
         <LeftPanelItem>
-          <LeftPanelLink to="/order-management">Order Management</LeftPanelLink>
-        </LeftPanelItem>
-        <LeftPanelItem>
-          <LeftPanelLink to="/complaints">Complaints</LeftPanelLink>
-        </LeftPanelItem>
-        <LeftPanelItem>
-          <LeftPanelLink to="/user-management">User Management</LeftPanelLink>
-        </LeftPanelItem>
-        <LeftPanelItem>
-          <LeftPanelLink to="/admin-management">Admin Management</LeftPanelLink>
-        </LeftPanelItem>
-        <LeftPanelItem>
-          <LeftPanelLink to="/events-activities">Events & Activities</LeftPanelLink>
-        </LeftPanelItem>
-        <LeftPanelItem>
-          <LeftPanelLink to="/settings">Settings</LeftPanelLink>
+        <LeftPanelLink to="/category">Category</LeftPanelLink>
         </LeftPanelItem>
       </LeftPanelList>
     </LeftPanelContainer>
