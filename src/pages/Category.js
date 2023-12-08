@@ -215,7 +215,7 @@ const Category = () => {
   const handleDelete = async category => {
     try {
       // Make a DELETE request to the API endpoint with the selected category id
-      await axios.delete(`http://localhost:8000/api/category/${category.id}/delete`);
+      await axios.delete(`http://localhost:8000/api/category/${selectedCategory.id}/delete`);
       // Remove the deleted category from the categories state
       setCategories(categories.filter(c => c.id !== category.id));
     } catch (error) {
