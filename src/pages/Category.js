@@ -206,7 +206,7 @@ const Category = () => {
           </CategoryTableRow>
         </CategoryTableHead>
         <CategoryTableBody>
-          {Array.isArray(categories) && categories.map((category, idx) => (
+          {Array.isArray(categories) && categories.map((category) => (
             <CategoryTableRow key={category.id}>
               <CategoryTableData>{category.id}</CategoryTableData>
               <CategoryTableData>{category.name}</CategoryTableData>
