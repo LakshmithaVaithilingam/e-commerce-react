@@ -166,23 +166,34 @@ const Category = () => {
           // Handle the error or provide user feedback
         }
       } else if (formMode === 'update') {
-        // Make a PUT request to the API endpoint with the form data and the selected category id
-        const response = await axios.put(
-          `http://localhost:8000/api/category/${selectedCategory.id}/edit`,
-          data
-        );
-  
-        // Check if the response has category data
-        if (response.data && response.data.category) {
-          // Update the categories state with the updated category
-          setCategories(
-            Array.isArray(categories) && categories.map((category) =>
-              category.id === selectedCategory.id ? response.data.category : category
-            )
+        try {
+          // Make a PUT request to the API endpoint with the form data and the selected category id
+          const response = await fetch(
+            `http://localhost:8000/api/category/${selectedCategory?.id}/edit`,
+            {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(data)
+            }
           );
-        } else {
-          console.error('Invalid response from the server:', response.data);
-          // Handle the error or provide user feedback
+          const responsedata = await response.json();
+          // Check if the response has category data
+          if (responsedata && responsedata.category) {
+            // Update the categories state with the updated category
+            setCategories(
+              Array.isArray(categories) && categories.map((category) =>
+                category.id === selectedCategory.id ? data.category : category
+              )
+            );
+          } else {
+            console.error('Invalid response from the server:', data);
+            // Handle the error or provide user feedback
+          }
+        } catch (error) {
+          // Handle the error
+          console.error(error);
         }
       }
   
@@ -199,7 +210,7 @@ const Category = () => {
   };
   
 
-  // Create a function to handle the edit button click
+  /*// Create a function to handle the edit button click
   const handleEdit = category => {
     // Set the selected category to the clicked category
     setSelectedCategory(category);
@@ -209,9 +220,28 @@ const Category = () => {
     reset({
       name: category.name,
     });
+  };*/
+
+  const handleEdit = category => {
+    // Check if category.id or category.category_id exists before setting selectedCategory
+    if (category.id || category.category_id) {
+      // Use category.id if available, otherwise use category.category_id
+      const categoryId = category.id || category.category_id;
+  
+      // Set the selected category to the clicked category
+      setSelectedCategory({ ...category, id: categoryId });
+      // Set the form mode to 'update'
+      setFormMode('update');
+      // Reset the form with the selected category data
+      reset({
+        name: category.name,
+      });
+    } else {
+      console.error('Category does not have an id:', category);
+    }
   };
 
-  // Create a function to handle the delete button click
+  /*// Create a function to handle the delete button click
   const handleDelete = async category => {
     try {
       // Make a DELETE request to the API endpoint with the selected category id
@@ -222,8 +252,28 @@ const Category = () => {
       // Handle the error
       console.error(error);
     }
+  };*/
+  const handleDelete = async category => {
+    try {
+      // Check if category.category_id exists before proceeding with the delete
+      if (category.category_id) {
+        // Make a DELETE request to the API endpoint with the selected category id
+        await axios.delete(`http://localhost:8000/api/category/${category.category_id}/delete`);
+        // Remove the deleted category from the categories state
+        setCategories(categories.filter(c => c.category_id !== category.category_id));
+        // Reset the form and set the form mode to 'create'
+        reset();
+        setFormMode('create');
+        // Set the selected category to null
+        setSelectedCategory(null);
+      } else {
+        console.error('Category does not have an id:', category);
+      }
+    } catch (error) {
+      // Handle the error
+      console.error(error);
+    }
   };
-
   // Use the useEffect hook to fetch the categories when the component mounts
   //useEffect(() => {fetchCategories();}, []);
 
