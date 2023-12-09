@@ -48,6 +48,9 @@ const LeftPanel = () => {
         <LeftPanelItem>
         <LeftPanelLink to="/category">Category</LeftPanelLink>
         </LeftPanelItem>
+        <LeftPanelItem>
+        <LeftPanelLink to="/Subcategory">Subcategory</LeftPanelLink>
+        </LeftPanelItem>
       </LeftPanelList>
     </LeftPanelContainer>
   );

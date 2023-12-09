@@ -137,11 +137,11 @@ const Category = () => {
       if (data.status === 200) {
         setCategories(data.categories); // Update form data with fetched admin
       } else {
-        console.error('Error fetching admin by ID:', data.message);
+        console.error('Error fetching category by ID:', data.message);
       }
       //setCategories(response.data);
     } catch (error) {
-      console.error('Error fetching admin by ID:', error);
+      console.error('Error fetching category by ID:', error);
     }
   };
 

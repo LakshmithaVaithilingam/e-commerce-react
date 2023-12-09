@@ -5,6 +5,8 @@ import ProductManagement from './pages/ProductManagement';
 import Navbar from './components/Navbar';
 import LeftPanel from './components/LeftPanel';
 import Category from './pages/Category';
+import Subcategory from './pages/Subcategory';
+
 
 // Create the App component using the page components and the routes
 const App = () => {
@@ -15,6 +17,7 @@ const App = () => {
       <Routes>
         <Route path="/product-management" element={<ProductManagement />} />
         <Route path="/category" element={<Category />} />
+        <Route path="/subcategory" element={<Subcategory />} />
         {/* <Route path="/complaints" element={<Complaints />} /> */}
         {/* <Route path="/user-management" element={<UserManagement />} /> */}
         {/* <Route path="/admin-management" element={<AdminManagement />} /> */}
