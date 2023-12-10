@@ -113,8 +113,10 @@ const Subcategory = () => {
     try {
       const response = await fetch('http://localhost:8000/api/subcategory');
       const data = await response.json();
+      console.log('Fetched subcategories:', data);
+      //console.log('Updated subcategories:', subcategories);
       if (data.status === 200) {
-        setSubcategories(data.subcategories);
+        setSubcategories(data.subcategory);
       } else {
         console.error('Error fetching subcategories:', data.message);
       }
@@ -145,14 +147,14 @@ const Subcategory = () => {
   const onSubmit = async data => {
     try {
         console.log('Data to be sent:', data);
-      if (formMode === 'create') {
-        const response = await axios.post('http://localhost:8000/api/subcategory', data);
-        console.log('Server Response:', response);
-        if (response.data && response.data.subcategory) {
-          setSubcategories([...subcategories, response.data.subcategory]);
-        } else {
-          console.error('Invalid response from the server:', response.data);
-        }
+        if (formMode === 'create') {
+          const response = await axios.post('http://localhost:8000/api/subcategory', data);
+          if (response.data && response.data.subcategory) {
+            // Fetch the updated list of subcategories after successful creation
+            fetchSubcategories();
+          } else {
+            console.error('Invalid response from the server:', response.data);
+          }
         
       } else if (formMode === 'update') {
         try {
@@ -223,7 +225,7 @@ const Subcategory = () => {
         <SubcategoryFormSelect {...register('category_id', { required: true })}>
           <option value="">Select a category</option>
           {categories.map(category => (
-            <option key={category.id} value={(category.id)}>{category.name}</option>
+            <option key={category.category_id} value={(category.category_id)}>{category.name}</option>
           ))}
         </SubcategoryFormSelect>
         {errors.category_id && <p>Category is required</p>}
@@ -250,7 +252,10 @@ const Subcategory = () => {
           {Array.isArray(subcategories) && subcategories.map(subcategory => (
             <SubcategoryTableRow key={subcategory.subcategory_id}>
               <SubcategoryTableData>{subcategory.subcategory_id}</SubcategoryTableData>
-              <SubcategoryTableData>{subcategory.category_name}</SubcategoryTableData>
+              <SubcategoryTableData>
+              {/* Find the category name based on category_id */}
+              {categories.find(category => category.category_id === subcategory.category_id)?.name}
+             </SubcategoryTableData>
               <SubcategoryTableData>{subcategory.name}</SubcategoryTableData>
               <SubcategoryTableData>
                 <SubcategoryTableButton
