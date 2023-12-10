@@ -137,7 +137,7 @@ const Category = () => {
       if (data.status === 200) {
         setCategories(data.categories); // Update form data with fetched admin
       } else {
-        console.error('Error fetching category by ID:', data.message);
+        console.error('No categories found:', data.message);
       }
       //setCategories(response.data);
     } catch (error) {
@@ -146,6 +146,7 @@ const Category = () => {
   };
 
   useEffect(() => {fetchCategories();}, []);
+
 
   const onSubmit = async data => {
     try {
@@ -156,6 +157,8 @@ const Category = () => {
           'http://localhost:8000/api/category',
           data
         );
+
+        console.log('Server Response:', response.data); 
   
         // Check if the response has category data
         if (response.data && response.data.category) {
