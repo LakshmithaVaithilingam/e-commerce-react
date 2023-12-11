@@ -3,34 +3,72 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 
-const ProductContainer = styled.div`
+const ProductManagementContainer = styled.div`
   width: calc(100% - 200px);
   height: 100vh;
   padding: 20px;
   background-color: #fff;
 `;
 
-const ProductTitle = styled.h1`
+const ProductManagementTitle = styled.h1`
   font-size: 24px;
   font-weight: bold;
   color: #333;
   margin-bottom: 20px;
 `;
 
-const ProductForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  width: 300px;
+const ProductManagementTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
 `;
 
-const ProductFormLabel = styled.label`
+const ProductManagementTableHead = styled.thead`
+  background-color: #eee;
+`;
+
+const ProductManagementTableBody = styled.tbody``;
+
+const ProductManagementTableRow = styled.tr``;
+
+const ProductManagementTableHeader = styled.th`
+  padding: 10px;
+  border: 1px solid #ccc;
+  text-align: left;
+`;
+
+const ProductManagementTableData = styled.td`
+  padding: 10px;
+  border: 1px solid #ccc;
+`;
+
+const ProductManagementTableButton = styled.button`
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: ${props => props.color};
+  color: #fff;
+  cursor: pointer;
+  outline: none;
+  &:hover {
+    background-color: ${props => props.hoverColor};
+  }
+`;
+
+const ProductManagementForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  width: 500px;
+`;
+
+const ProductManagementFormLabel = styled.label`
   font-size: 16px;
   font-weight: bold;
   color: #333;
   margin-bottom: 10px;
 `;
 
-const ProductFormSelect = styled.select`
+const ProductManagementFormSelect = styled.select`
   width: 100%;
   height: 30px;
   border: 1px solid #ccc;
@@ -40,7 +78,7 @@ const ProductFormSelect = styled.select`
   margin-bottom: 10px;
 `;
 
-const ProductFormInput = styled.input`
+const ProductManagementFormInput = styled.input`
   width: 100%;
   height: 30px;
   border: 1px solid #ccc;
@@ -50,7 +88,17 @@ const ProductFormInput = styled.input`
   margin-bottom: 20px;
 `;
 
-const ProductFormButton = styled.button`
+const ProductManagementFormTextarea = styled.textarea`
+  width: 100%;
+  height: 80px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+  outline: none;
+  margin-bottom: 20px;
+`;
+
+const ProductManagementFormButton = styled.button`
   width: 100%;
   height: 40px;
   border: none;
@@ -67,7 +115,13 @@ const ProductFormButton = styled.button`
 const ProductManagement = () => {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
+  const [products, setProducts] = useState([]);
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+  useEffect(() => {
+    fetchCategories();
+    fetchProducts();
+  }, []);
 
   const fetchCategories = async () => {
     try {
@@ -85,7 +139,7 @@ const ProductManagement = () => {
 
   const fetchSubcategories = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/subcategory');
+      const response = await fetch(`http://localhost:8000/api/subcategory`);
       const data = await response.json();
       if (data.status === 200) {
         setSubcategories(data.subcategory);
@@ -97,63 +151,159 @@ const ProductManagement = () => {
     }
   };
 
-  useEffect(() => {
-    fetchCategories();
-    fetchSubcategories();
-  }, []);
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/products');
+      const data = await response.json();
+      if (data.status === 200) {
+        setProducts(data.products);
+      } else {
+        console.error('Error fetching products:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error);
+    }
+  };
 
   const onSubmit = async data => {
+    console.log('Form Data:', data);
+  
     try {
-      console.log('Data to be sent:', data);
-      // Make a POST request to the API endpoint with the form data
-      // Adjust the API endpoint based on your backend structure
-      const response = await axios.post('http://localhost:8000/api/product', data);
-
-      if (response.data && response.data.product) {
-        // Handle success, e.g., show a success message
+      // Check if 'images' is a FileList
+      if (Array.isArray(data.images) || data.images instanceof FileList) {
+        console.log('Type of data.images:', typeof data.images);
+  
+        // Create FormData object
+        const formData = new FormData();
+  
+        // Append other form fields to FormData
+        formData.append('name', data.name);
+        formData.append('description', data.description);
+        formData.append('quantity', data.quantity);
+        formData.append('size', data.size);
+        formData.append('color', data.color);
+        formData.append('price', data.price);
+        formData.append('category_id', data.category_id);
+        formData.append('subcategory_id', data.subcategory_id);
+  
+        // Append each file to FormData with the key 'images[]'
+        for (let i = 0; i < data.images.length; i++) {
+          formData.append('images[]', data.images[i]);
+        }
+  
+        // Make POST request with FormData
+        const response = await axios.post('http://localhost:8000/api/products', formData);
+  
+        if (response.data && response.data.product) {
+          fetchProducts(); // Fetch the updated list of products after successful creation
+        } else {
+          console.error('Invalid response from the server:', response.data);
+        }
+        reset();
       } else {
-        console.error('Invalid response from the server:', response.data);
+        console.error('Invalid type for data.images:', typeof data.images);
       }
-
-      // Reset the form
-      reset();
     } catch (error) {
-      console.error(error);
+      console.error('Error creating product:', error);
+    }
+  };
+  
+
+  const handleEdit = (productId) => {
+    // Implement edit functionality
+    console.log('Edit product with ID:', productId);
+  };
+
+  const handleDelete = async (productId) => {
+    try {
+      await axios.delete(`http://localhost:8000/api/products/${productId}`);
+      setProducts(products.filter(product => product.products_id !== productId));
+    } catch (error) {
+      console.error('Error deleting product:', error);
     }
   };
 
   return (
-    <ProductContainer>
-      <ProductTitle>Product Management</ProductTitle>
-      <ProductForm onSubmit={handleSubmit(onSubmit)}>
-        <ProductFormLabel>Select Category</ProductFormLabel>
-        <ProductFormSelect {...register('category_id', { required: true })}>
+    <ProductManagementContainer>
+      <ProductManagementTitle>Product Management</ProductManagementTitle>
+      <ProductManagementForm onSubmit={handleSubmit(onSubmit)}>
+        <ProductManagementFormLabel>Select Category</ProductManagementFormLabel>
+        <ProductManagementFormSelect {...register('category_id', { required: true })} onChange={(e) => fetchSubcategories(e.target.value)}>
           <option value="">Select a category</option>
           {categories.map(category => (
             <option key={category.category_id} value={category.category_id}>{category.name}</option>
           ))}
-        </ProductFormSelect>
+        </ProductManagementFormSelect>
         {errors.category_id && <p>Category is required</p>}
-
-        <ProductFormLabel>Select Subcategory</ProductFormLabel>
-        <ProductFormSelect {...register('subcategory_id', { required: true })}>
+        <ProductManagementFormLabel>Select Subcategory</ProductManagementFormLabel>
+        <ProductManagementFormSelect {...register('subcategory_id', { required: true })}>
           <option value="">Select a subcategory</option>
           {subcategories.map(subcategory => (
             <option key={subcategory.subcategory_id} value={subcategory.subcategory_id}>{subcategory.name}</option>
           ))}
-        </ProductFormSelect>
+        </ProductManagementFormSelect>
         {errors.subcategory_id && <p>Subcategory is required</p>}
-
-        <ProductFormLabel>Product Name</ProductFormLabel>
-        <ProductFormInput
-          type="text"
-          {...register('name', { required: true })}
-        />
+        <ProductManagementFormLabel>Product Name</ProductManagementFormLabel>
+        <ProductManagementFormInput type="text" {...register('name', { required: true })} />
         {errors.name && <p>Name is required</p>}
-
-        <ProductFormButton type="submit">Create Product</ProductFormButton>
-      </ProductForm>
-    </ProductContainer>
+        <ProductManagementFormLabel>Description</ProductManagementFormLabel>
+        <ProductManagementFormTextarea {...register('description', { required: true })} />
+        {errors.description && <p>Description is required</p>}
+        <ProductManagementFormLabel>Quantity</ProductManagementFormLabel>
+        <ProductManagementFormInput type="number" {...register('quantity', { required: true })} />
+        {errors.quantity && <p>Quantity is required</p>}
+        <ProductManagementFormLabel>Size</ProductManagementFormLabel>
+        <ProductManagementFormInput type="text" {...register('size', { required: true })} />
+        {errors.size && <p>Size is required</p>}
+        <ProductManagementFormLabel>Color</ProductManagementFormLabel>
+        <ProductManagementFormInput type="text" {...register('color', { required: true })} />
+        {errors.color && <p>Color is required</p>}
+        <ProductManagementFormLabel>Price</ProductManagementFormLabel>
+        <ProductManagementFormInput type="number" step="0.01" {...register('price', { required: true })} />
+        {errors.price && <p>Price is required</p>}
+        <ProductManagementFormLabel>Images</ProductManagementFormLabel>
+        <ProductManagementFormInput type="file" {...register('images', { required: true, multiple: true })} />
+        {errors.images && <p>Images are required</p>}
+        <ProductManagementFormButton type="submit">Create</ProductManagementFormButton>
+      </ProductManagementForm>
+      <ProductManagementTable>
+        <ProductManagementTableHead>
+          <ProductManagementTableRow>
+            <ProductManagementTableHeader>ID</ProductManagementTableHeader>
+            <ProductManagementTableHeader>Name</ProductManagementTableHeader>
+            <ProductManagementTableHeader>Quantity</ProductManagementTableHeader>
+            <ProductManagementTableHeader>Price</ProductManagementTableHeader>
+            <ProductManagementTableHeader>Actions</ProductManagementTableHeader>
+          </ProductManagementTableRow>
+        </ProductManagementTableHead>
+        <ProductManagementTableBody>
+          {Array.isArray(products) && products.map(product => (
+            <ProductManagementTableRow key={product.products_id}>
+              <ProductManagementTableData>{product.products_id}</ProductManagementTableData>
+              <ProductManagementTableData>{product.name}</ProductManagementTableData>
+              <ProductManagementTableData>{product.quantity}</ProductManagementTableData>
+              <ProductManagementTableData>{product.price}</ProductManagementTableData>
+              <ProductManagementTableData>
+                <ProductManagementTableButton
+                  color="#333"
+                  hoverColor="#555"
+                  onClick={() => handleEdit(product.products_id)}
+                >
+                  Edit
+                </ProductManagementTableButton>
+                <ProductManagementTableButton
+                  color="#f00"
+                  hoverColor="#f33"
+                  onClick={() => handleDelete(product.products_id)}
+                >
+                  Delete
+                </ProductManagementTableButton>
+              </ProductManagementTableData>
+            </ProductManagementTableRow>
+          ))}
+        </ProductManagementTableBody>
+      </ProductManagementTable>
+    </ProductManagementContainer>
   );
 };
 
