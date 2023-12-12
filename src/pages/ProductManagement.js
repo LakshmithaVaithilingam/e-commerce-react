@@ -116,10 +116,13 @@ const ProductManagement = () => {
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
   const [products, setProducts] = useState([]);
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [formMode, setFormMode] = useState('create'); // 'create' or 'update'
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   useEffect(() => {
     fetchCategories();
+    fetchSubcategories();
     fetchProducts();
   }, []);
 
@@ -166,58 +169,112 @@ const ProductManagement = () => {
   };
 
   const onSubmit = async data => {
-    console.log('Form Data:', data);
-  
     try {
-      // Check if 'images' is a FileList
-      if (Array.isArray(data.images) || data.images instanceof FileList) {
-        console.log('Type of data.images:', typeof data.images);
-  
-        // Create FormData object
-        const formData = new FormData();
-  
-        // Append other form fields to FormData
-        formData.append('name', data.name);
-        formData.append('description', data.description);
-        formData.append('quantity', data.quantity);
-        formData.append('size', data.size);
-        formData.append('color', data.color);
-        formData.append('price', data.price);
-        formData.append('category_id', data.category_id);
-        formData.append('subcategory_id', data.subcategory_id);
-  
-        // Append each file to FormData with the key 'images[]'
-        for (let i = 0; i < data.images.length; i++) {
-          formData.append('images[]', data.images[i]);
-        }
-  
-        // Make POST request with FormData
-        const response = await axios.post('http://localhost:8000/api/products', formData);
-  
-        if (response.data && response.data.product) {
-          fetchProducts(); // Fetch the updated list of products after successful creation
-        } else {
-          console.error('Invalid response from the server:', response.data);
-        }
-        reset();
+      const formData = new FormData();
+      console.log('Before appending data:', formData);
+      // Append form fields to FormData
+      formData.append('name', data.name);
+      formData.append('description', data.description);
+      formData.append('quantity', data.quantity);
+      formData.append('size', data.size);
+      formData.append('color', data.color);
+      formData.append('price', data.price);
+      formData.append('category_id', data.category_id);
+      formData.append('subcategory_id', data.subcategory_id);
+
+      // If updating, append the product ID to FormData
+      if (formMode === 'update' && selectedProduct) {
+        formData.append('product_id', selectedProduct.products_id);
+      }
+
+      // Append each file to FormData with the key 'images[]'
+      for (let i = 0; i < data.images.length; i++) {
+        formData.append('images[]', data.images[i]);
+      }
+      console.log('After appending data:', formData);
+
+      // Determine the API endpoint based on whether it's an update or create
+      const apiEndpoint = formMode === 'update'
+        ? `http://localhost:8000/api/products/${selectedProduct.products_id}/edit`
+        : 'http://localhost:8000/api/products';
+
+      // Determine the HTTP method based on whether it's an update or create
+      const httpMethod = formMode === 'update' ? 'PUT' : 'POST';
+
+      // Make the request with FormData
+      const response = await axios({
+        method: httpMethod,
+        url: apiEndpoint,
+        data: formData,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+      },
+      });
+
+      console.log('Axios Response:', response);
+
+      if (response.data && response.data.product) {
+        console.error('Validation errors:', response.data.errors);
+        fetchProducts(); // Fetch the updated list of products after successful creation or update
+        reset(); // Reset the form after successful submission
+        setFormMode('create'); // Switch back to create mode
+        setSelectedProduct(null); // Clear the selected product
       } else {
-        console.error('Invalid type for data.images:', typeof data.images);
+        console.error('Invalid response from the server:', response.data);
       }
     } catch (error) {
-      console.error('Error creating product:', error);
+      console.error('Error creating/updating product:', error);
     }
   };
   
 
   const handleEdit = (productId) => {
-    // Implement edit functionality
-    console.log('Edit product with ID:', productId);
+    // Find the product to edit
+    const productToEdit = products.find(product => product.products_id === productId);
+    console.log('Product to Edit:', productToEdit);
+    // Set the selected product and switch to update mode
+    setSelectedProduct(productToEdit);
+    setFormMode('update');
+    
+  
+    // Populate the form fields with the existing data
+    reset({
+      category_id: productToEdit.category_id,
+      subcategory_id: productToEdit.subcategory_id,
+      name: productToEdit.name,
+      description: productToEdit.description,
+      quantity: productToEdit.quantity,
+      size: productToEdit.size,
+      color: productToEdit.color,
+      price: productToEdit.price,
+    });
+    
+  
+    // Manually set the file input value to the existing images
+    const imagesInput = document.querySelector('input[type="file"]');
+    imagesInput.value = ''; // Clear the input to handle the case where the same images are selected
+    imagesInput.files = null; // Clear the files to allow setting new ones
+    
+  
+    // Create a new FileList with the existing images
+    const existingImages = productToEdit.images.map(imageUrl => {
+      // Assuming the images are stored with absolute URLs
+      return new File([imageUrl], imageUrl.split('/').pop());
+    });
+  
+    const newFileList = new DataTransfer();
+    existingImages.forEach(file => newFileList.items.add(file));
+  
+    // Set the file input value with the new FileList
+    imagesInput.files = newFileList.files;
   };
+  
 
   const handleDelete = async (productId) => {
     try {
       await axios.delete(`http://localhost:8000/api/products/${productId}`);
       setProducts(products.filter(product => product.products_id !== productId));
+      reset(); // Reset the form after successful deletion
     } catch (error) {
       console.error('Error deleting product:', error);
     }
@@ -262,9 +319,11 @@ const ProductManagement = () => {
         <ProductManagementFormInput type="number" step="0.01" {...register('price', { required: true })} />
         {errors.price && <p>Price is required</p>}
         <ProductManagementFormLabel>Images</ProductManagementFormLabel>
-        <ProductManagementFormInput type="file" {...register('images', { required: true, multiple: true })} />
+        <ProductManagementFormInput type="file" {...register('images[]', { required: true, multiple: true })} />
         {errors.images && <p>Images are required</p>}
-        <ProductManagementFormButton type="submit">Create</ProductManagementFormButton>
+        <ProductManagementFormButton type="submit">
+        {formMode === 'create' ? 'Create' : 'Update'}
+        </ProductManagementFormButton>
       </ProductManagementForm>
       <ProductManagementTable>
         <ProductManagementTableHead>
