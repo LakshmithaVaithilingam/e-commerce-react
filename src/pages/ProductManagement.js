@@ -214,7 +214,7 @@ const ProductManagement = () => {
       console.log('Axios Response:', response);
 
       if (response.data && response.data.product) {
-        console.error('Validation errors:', response.data.errors);
+        
         fetchProducts(); // Fetch the updated list of products after successful creation or update
         reset(); // Reset the form after successful submission
         setFormMode('create'); // Switch back to create mode
@@ -272,7 +272,7 @@ const ProductManagement = () => {
 
   const handleDelete = async (productId) => {
     try {
-      await axios.delete(`http://localhost:8000/api/products/${productId}`);
+      await axios.delete(`http://localhost:8000/api/products/${productId}/delete`);
       setProducts(products.filter(product => product.products_id !== productId));
       reset(); // Reset the form after successful deletion
     } catch (error) {
@@ -330,6 +330,7 @@ const ProductManagement = () => {
           <ProductManagementTableRow>
             <ProductManagementTableHeader>ID</ProductManagementTableHeader>
             <ProductManagementTableHeader>Name</ProductManagementTableHeader>
+            <ProductManagementTableHeader>Images</ProductManagementTableHeader>
             <ProductManagementTableHeader>Quantity</ProductManagementTableHeader>
             <ProductManagementTableHeader>Price</ProductManagementTableHeader>
             <ProductManagementTableHeader>Actions</ProductManagementTableHeader>
@@ -340,6 +341,12 @@ const ProductManagement = () => {
             <ProductManagementTableRow key={product.products_id}>
               <ProductManagementTableData>{product.products_id}</ProductManagementTableData>
               <ProductManagementTableData>{product.name}</ProductManagementTableData>
+              <ProductManagementTableData>
+  {/* Render images */}
+  {product.images.map((image, index) => (
+    <img key={index} src={image} alt={`Product ${product.products_id} - ${index + 1}`} style={{ maxWidth: '50px', maxHeight: '50px', marginRight: '5px' }} />
+  ))}
+</ProductManagementTableData>
               <ProductManagementTableData>{product.quantity}</ProductManagementTableData>
               <ProductManagementTableData>{product.price}</ProductManagementTableData>
               <ProductManagementTableData>
