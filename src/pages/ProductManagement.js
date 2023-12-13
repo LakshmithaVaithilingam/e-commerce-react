@@ -342,11 +342,11 @@ const ProductManagement = () => {
               <ProductManagementTableData>{product.products_id}</ProductManagementTableData>
               <ProductManagementTableData>{product.name}</ProductManagementTableData>
               <ProductManagementTableData>
-  {/* Render images */}
-  {product.images.map((image, index) => (
-    <img key={index} src={image} alt={`Product ${product.products_id} - ${index + 1}`} style={{ maxWidth: '50px', maxHeight: '50px', marginRight: '5px' }} />
-  ))}
-</ProductManagementTableData>
+              {/* Render images */}
+              {product.images.map((image, index) => (
+              <img key={index} src={image} alt={`Product ${product.products_id} - ${index + 1}`} style={{ maxWidth: '50px', maxHeight: '50px', marginRight: '5px' }} />
+              ))}
+              </ProductManagementTableData>
               <ProductManagementTableData>{product.quantity}</ProductManagementTableData>
               <ProductManagementTableData>{product.price}</ProductManagementTableData>
               <ProductManagementTableData>
