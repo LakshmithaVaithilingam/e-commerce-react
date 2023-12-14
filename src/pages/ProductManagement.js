@@ -3,6 +3,8 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 
+
+// Create styled elements using Styled Components
 const ProductManagementContainer = styled.div`
   width: calc(100% - 200px);
   height: 100vh;
@@ -11,54 +13,21 @@ const ProductManagementContainer = styled.div`
 `;
 
 const ProductManagementTitle = styled.h1`
-  font-size: 24px;
+  font-size: 28px;
   font-weight: bold;
   color: #333;
   margin-bottom: 20px;
-`;
-
-const ProductManagementTable = styled.table`
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 20px;
-`;
-
-const ProductManagementTableHead = styled.thead`
-  background-color: #eee;
-`;
-
-const ProductManagementTableBody = styled.tbody``;
-
-const ProductManagementTableRow = styled.tr``;
-
-const ProductManagementTableHeader = styled.th`
-  padding: 10px;
-  border: 1px solid #ccc;
-  text-align: left;
-`;
-
-const ProductManagementTableData = styled.td`
-  padding: 10px;
-  border: 1px solid #ccc;
-`;
-
-const ProductManagementTableButton = styled.button`
-  padding: 5px 10px;
-  border: none;
-  border-radius: 5px;
-  background-color: ${props => props.color};
-  color: #fff;
-  cursor: pointer;
-  outline: none;
-  &:hover {
-    background-color: ${props => props.hoverColor};
-  }
 `;
 
 const ProductManagementForm = styled.form`
   display: flex;
   flex-direction: column;
   width: 500px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #fff;
+  margin-bottom: 20px;
 `;
 
 const ProductManagementFormLabel = styled.label`
@@ -107,10 +76,76 @@ const ProductManagementFormButton = styled.button`
   color: #fff;
   cursor: pointer;
   outline: none;
+  transition: background-color 0.2s ease-in-out;
+
   &:hover {
     background-color: #555;
   }
 `;
+
+const ProductManagementTable = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  
+`;
+
+const ProductManagementTableHead = styled.thead`
+  background-color: #eee;
+`;
+
+const ProductManagementTableBody = styled.tbody``;
+
+const ProductManagementTableRow = styled.tr``;
+
+const ProductManagementTableHeader = styled.th`
+  padding: 15px;
+  border: 1px solid #ccc;
+  text-align: left;
+  font-weight: bold;
+  font-size: 16px;
+`;
+
+const ProductManagementTableData = styled.td`
+  padding: 15px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+`;
+
+const ProductManagementTableButton = styled.button`
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  margin-right: 5px;
+  cursor: pointer;
+  outline: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
+  &:hover {
+    background-color: ${props => props.hoverColor};
+    color: #fff;
+  }
+
+`;
+
+const AddProductButton = styled.button`
+  background-color: #000;
+  color: #fff;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease-in-out;
+
+  &:hover {
+    background-color: #333;
+  }
+`;
+
 
 const ProductManagement = () => {
   const [categories, setCategories] = useState([]);
@@ -118,6 +153,7 @@ const ProductManagement = () => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [formMode, setFormMode] = useState('create'); // 'create' or 'update'
+  const [showForm, setShowForm] = useState(false); // State to control form visibility
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   useEffect(() => {
@@ -219,6 +255,7 @@ const ProductManagement = () => {
         reset(); // Reset the form after successful submission
         setFormMode('create'); // Switch back to create mode
         setSelectedProduct(null); // Clear the selected product
+        setShowForm(false); // Hide the form after successful submission
       } else {
         console.error('Invalid response from the server:', response.data);
       }
@@ -226,6 +263,8 @@ const ProductManagement = () => {
       console.error('Error creating/updating product:', error);
     }
   };
+
+  
   
 
   const handleEdit = (productId) => {
@@ -283,6 +322,11 @@ const ProductManagement = () => {
   return (
     <ProductManagementContainer>
       <ProductManagementTitle>Product Management</ProductManagementTitle>
+       {/* Add button to toggle form visibility */}
+       <AddProductButton onClick={() => setShowForm(!showForm)}>
+        {showForm ? 'Hide Form' : 'Add Product'}
+      </AddProductButton>
+      {showForm && (
       <ProductManagementForm onSubmit={handleSubmit(onSubmit)}>
         <ProductManagementFormLabel>Select Category</ProductManagementFormLabel>
         <ProductManagementFormSelect {...register('category_id', { required: true })} onChange={(e) => fetchSubcategories(e.target.value)}>
@@ -325,6 +369,7 @@ const ProductManagement = () => {
         {formMode === 'create' ? 'Create' : 'Update'}
         </ProductManagementFormButton>
       </ProductManagementForm>
+      )}
       <ProductManagementTable>
         <ProductManagementTableHead>
           <ProductManagementTableRow>
