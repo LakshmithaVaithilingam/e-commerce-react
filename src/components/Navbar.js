@@ -1,7 +1,7 @@
 // Import React, React Router, and Styled Components
 import React from 'react';
-import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom';
 
 // Create styled elements using Styled Components
 const NavbarContainer = styled.div`
@@ -37,12 +37,27 @@ const UserIcon = styled.img`
   object-fit: cover;
 `;
 
+const StyledLink = styled(Link)`
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  margin-left: 20px; /* Adjust margin as needed */
+  
+  &:hover {
+    color: #555;
+  }
+`;
+
 // Create the navbar component using the styled elements and the user menu component
 const Navbar = () => {
     return (
       <NavbarContainer>
-        <Logo>E-commerce</Logo>
+        <Logo>Skooler</Logo>
         <SearchInput type="text" placeholder="Search products..." />
+        <StyledLink to="/products">Products</StyledLink>
+        <StyledLink to="/product-management">ProductManagement</StyledLink>
+        <StyledLink to="/category">Category</StyledLink>
+        <StyledLink to="/subcategory">Subategory</StyledLink>
         {/* Import and render the user menu component */}
         <UserIcon src="user.jpg" alt="User" />
       </NavbarContainer>
