@@ -6,7 +6,7 @@ import styled from 'styled-components';
 // Create styled elements using Styled Components
 const LeftPanelContainer = styled.div`
   width: 200px;
-  height: 100vh;
+  height: 15vh;
   padding: 20px;
   background-color: #eee;
 `;
@@ -42,9 +42,6 @@ const LeftPanel = () => {
     <LeftPanelContainer>
       <LeftPanelTitle>Admin Panel</LeftPanelTitle>
       <LeftPanelList>
-        <LeftPanelItem>
-          <LeftPanelLink to="/product-management">Product Management</LeftPanelLink>
-        </LeftPanelItem>
         <LeftPanelItem>
         <LeftPanelLink to="/category">Category</LeftPanelLink>
         </LeftPanelItem>
