@@ -4,7 +4,6 @@ import axios from 'axios';
 import { useForm } from 'react-hook-form';
 import styled from 'styled-components';
 
-// Create styled elements using Styled Components
 const CategoryContainer = styled.div`
   width: calc(100% - 200px);
   height: 100vh;
@@ -23,6 +22,7 @@ const CategoryTable = styled.table`
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 const CategoryTableHead = styled.thead`
@@ -34,26 +34,29 @@ const CategoryTableBody = styled.tbody``;
 const CategoryTableRow = styled.tr``;
 
 const CategoryTableHeader = styled.th`
-  padding: 10px;
+  padding: 15px;
   border: 1px solid #ccc;
   text-align: left;
+  font-weight: bold;
 `;
 
 const CategoryTableData = styled.td`
-  padding: 10px;
+  padding: 15px;
   border: 1px solid #ccc;
 `;
 
 const CategoryTableButton = styled.button`
-  padding: 5px 10px;
+  padding: 8px 12px;
   border: none;
   border-radius: 5px;
-  background-color: ${props => props.color};
-  color: #fff;
+  margin-right: 5px;
   cursor: pointer;
   outline: none;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+
   &:hover {
     background-color: ${props => props.hoverColor};
+    color: #fff;
   }
 `;
 
@@ -61,6 +64,11 @@ const CategoryForm = styled.form`
   display: flex;
   flex-direction: column;
   width: 300px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  border-radius: 5px;
+  background-color: #fff;
+  margin-bottom: 20px;
 `;
 
 const CategoryFormLabel = styled.label`
@@ -89,11 +97,12 @@ const CategoryFormButton = styled.button`
   color: #fff;
   cursor: pointer;
   outline: none;
+  transition: background-color 0.2s ease-in-out;
+
   &:hover {
     background-color: #555;
   }
 `;
-
 // Create the category component using the styled elements and the state
 const Category = () => {
   // Create a state variable to store the categories
