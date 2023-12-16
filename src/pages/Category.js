@@ -293,6 +293,17 @@ const Category = () => {
   return (
     <CategoryContainer>
       <CategoryTitle>Category Management</CategoryTitle>
+      <CategoryForm onSubmit={handleSubmit(onSubmit)}>
+        <CategoryFormLabel>Category Name</CategoryFormLabel>
+        <CategoryFormInput
+          type="text"
+          {...register('name', { required: true })}
+        />
+        {errors.name && <p>Name is required</p>}
+        <CategoryFormButton type="submit">
+          {formMode === 'create' ? 'Create' : 'Update'}
+        </CategoryFormButton>
+      </CategoryForm>
       <CategoryTable>
         <CategoryTableHead>
           <CategoryTableRow>
@@ -326,17 +337,6 @@ const Category = () => {
           ))}
         </CategoryTableBody>
       </CategoryTable>
-      <CategoryForm onSubmit={handleSubmit(onSubmit)}>
-        <CategoryFormLabel>Category Name</CategoryFormLabel>
-        <CategoryFormInput
-          type="text"
-          {...register('name', { required: true })}
-        />
-        {errors.name && <p>Name is required</p>}
-        <CategoryFormButton type="submit">
-          {formMode === 'create' ? 'Create' : 'Update'}
-        </CategoryFormButton>
-      </CategoryForm>
     </CategoryContainer>
   );
 };
