@@ -12,6 +12,10 @@ const ProductsContainer = styled.div`
 `;
 
 const ProductCard = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
   border: 1px solid #ddd;
   padding: 15px;
   text-align: center;
@@ -96,11 +100,13 @@ const ProductsPage = () => {
             <ProductTitle>{product.name}</ProductTitle>
             <ProductDescription>{product.description}</ProductDescription>
             <ProductPrice>Price: ${product.price}</ProductPrice>
+            <Link key={product.products_id} to={`/products/${product.products_id}`}>
             <img
               src={product.images[0]} // Assuming the first image in the array is the main product image
               alt={`Product ${product.products_id}`}
               style={{ maxWidth: '100%', maxHeight: '200px', marginBottom: '10px' }}
             />
+            </Link>
             <StyledButton onClick={() => toggleCart(product.products_id)}>
               {cart[product.products_id] ? 'Remove Item' : 'Add to Cart'}
             </StyledButton>
