@@ -24,9 +24,34 @@ const ProductDetailsInfo = styled.div`
 `;
 
 const ProductImagesContainer = styled.div`
-  display: flex;
-  margin-bottom: 20px;
+  position: relative;
+  max-height: 300px;
   overflow: hidden;
+  display: flex;
+`;
+
+const PrevButton = styled.button`
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #333;
+`;
+
+const NextButton = styled.button`
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  color: #333;
 `;
 
 const ProductImage = styled.img`
@@ -130,6 +155,7 @@ const ProductDetailsPage = () => {
   const [productDetails, setProductDetails] = useState({});
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [product, setProduct] = useState(null);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   useEffect(() => {
     fetchProductDetails();
@@ -184,16 +210,32 @@ const ProductDetailsPage = () => {
   return (
     <ProductDetailsContainer>
       <ProductDetailsInfo>
-        <ProductImagesContainer>
-          {productDetails.images &&
-            productDetails.images.map((image, index) => (
-              <ProductImage key={index} src={image} alt={`Product ${productId} - ${index + 1}`} />
-            ))}
-        </ProductImagesContainer>
+      <ProductImagesContainer>
+        <PrevButton onClick={() => setCurrentImageIndex((prev) => (prev > 0 ? prev - 1 : 0))}>
+        &#8249;
+      </PrevButton>
+      {productDetails.images && (
+      <ProductImage
+      key={currentImageIndex}
+      src={productDetails.images[currentImageIndex]}
+      alt={`Product ${productId} - ${currentImageIndex + 1}`}
+      />
+      )}
+      <NextButton
+      onClick={() =>
+      setCurrentImageIndex((prev) =>
+      prev < productDetails.images.length - 1 ? prev + 1 : prev
+      )
+    }
+    >
+      &#8250;
+      </NextButton>
+      </ProductImagesContainer>
         <ProductTitle>{productDetails.name}</ProductTitle>
         <ProductDescription>{productDetails.description}</ProductDescription>
         <p>Quantity: {productDetails.quantity}</p>
         <p>Color: {productDetails.color}</p>
+        <p>Size: {productDetails.size}</p>
         <StyledPrice>Price: ${productDetails.price}</StyledPrice>
         <ProductDetailsButton onClick={handleBuyNow}>Buy Now</ProductDetailsButton>
         <ProductDetailsButton onClick={handleAddToCart}>
