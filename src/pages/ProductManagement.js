@@ -217,6 +217,8 @@ const ProductManagement = () => {
       formData.append('price', data.price);
       formData.append('category_id', data.category_id);
       formData.append('subcategory_id', data.subcategory_id);
+      formData.append('age_group', data.age_group);
+      formData.append('discount', data.discount);
 
       // If updating, append the product ID to FormData
       if (formMode === 'update' && selectedProduct) {
@@ -362,8 +364,12 @@ const ProductManagement = () => {
         <ProductManagementFormLabel>Price</ProductManagementFormLabel>
         <ProductManagementFormInput type="number" step="0.01" {...register('price', { required: true })} />
         {errors.price && <p>Price is required</p>}
+        <ProductManagementFormLabel>Age Group</ProductManagementFormLabel>
+        <ProductManagementFormInput type="text" {...register('age_group')} />
+        <ProductManagementFormLabel>Discount</ProductManagementFormLabel>
+        <ProductManagementFormInput type="number" step="0.01" {...register('discount')} />
         <ProductManagementFormLabel>Images</ProductManagementFormLabel>
-        <ProductManagementFormInput type="file" {...register('images[]', { required: true, multiple: true })} />
+        <ProductManagementFormInput type="file" {...register('images', { required: true, multiple: true })} multiple />
         {errors.images && <p>Images are required</p>}
         <ProductManagementFormButton type="submit">
         {formMode === 'create' ? 'Create' : 'Update'}
