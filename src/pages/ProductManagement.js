@@ -288,6 +288,8 @@ const ProductManagement = () => {
       size: productToEdit.size,
       color: productToEdit.color,
       price: productToEdit.price,
+      age_group: productToEdit.age_group,
+      discount: productToEdit.discount,
     });
     
   
