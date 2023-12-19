@@ -107,7 +107,8 @@ const ProductsPage = () => {
   const [filters, setFilters] = useState({
     category_id: '',
     subcategory_id: '',
-    age_group: '',
+    price_min: '',
+    price_max: '',
   });
 
   useEffect(() => {
@@ -158,11 +159,30 @@ const ProductsPage = () => {
   const fetchProducts = async () => {
     try {
       let response;
+
+    // Build the params object based on the provided filters
+    const params = {};
+
+    if (filters.category_id) {
+      params.category_id = filters.category_id;
+    }
+
+    if (filters.subcategory_id) {
+      params.subcategory_id = filters.subcategory_id;
+    }
+
+    if (filters.price_min) {
+      params.price_min = filters.price_min;
+    }
+
+    if (filters.price_max) {
+      params.price_max = filters.price_max;
+    }
   
       // Check if filters are present
       if (Object.values(filters).some(Boolean)) {
         response = await axios.get('http://localhost:8000/api/products', {
-          params: filters,
+          params,
         });
       } else {
         // Fetch all products when no filters are present
@@ -213,7 +233,6 @@ const ProductsPage = () => {
             </option>
           ))}
         </select>
-
         {/* Subcategory filter */}
         <label htmlFor="subcategory">Subcategory:</label>
         <select
@@ -223,36 +242,26 @@ const ProductsPage = () => {
         >
           <option value="">All Subcategories</option>
           {subcategories.map((subcategory) => (
-            <option key={subcategory.subcategory_id} value={subcategory.subcategory_id}>
-              {subcategory.name}
-            </option>
-          ))}
-        </select>
-
-        {/* Age group filter */}
-        <label htmlFor="ageGroup">Age Group:</label>
-        <input
-          type="text"
-          id="ageGroup"
-          value={filters.age_group}
-          onChange={(e) => setFilters({ ...filters, age_group: e.target.value })}
-        />
-
-        {/* Price range filters */}
-        <label htmlFor="priceMin">Price Min:</label>
-        <input
-          type="number"
-          id="priceMin"
-          value={filters.price_min}
-          onChange={(e) => setFilters({ ...filters, price_min: e.target.value })}
-        />
-        <label htmlFor="priceMax">Price Max:</label>
-        <input
-          type="number"
-          id="priceMax"
-          value={filters.price_max}
-          onChange={(e) => setFilters({ ...filters, price_max: e.target.value })}
-        />
+          <option key={subcategory.subcategory_id} value={subcategory.subcategory_id}>
+          {subcategory.name}
+          </option>
+        ))}
+       </select>
+       {/* Price range filters */}
+      <label htmlFor="priceMin">Price Min:</label>
+      <input
+      type="number"
+      id="priceMin"
+      value={filters.price_min}
+      onChange={(e) => setFilters({ ...filters, price_min: e.target.value })}
+      />
+      <label htmlFor="priceMax">Price Max:</label>
+      <input
+      type="number"
+      id="priceMax"
+      value={filters.price_max}
+      onChange={(e) => setFilters({ ...filters, price_max: e.target.value })}
+      />
 
         {/* Apply button */}
         <button type="button" onClick={applyFilters}>
