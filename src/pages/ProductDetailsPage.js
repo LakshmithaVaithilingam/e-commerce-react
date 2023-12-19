@@ -150,12 +150,34 @@ const ViewDetailsButton = styled(ProductDetailsButton)`
   }
 `;
 
+const RatingsAndReviewsContainer = styled.div`
+  margin-top: 20px;
+`;
+
+const RatingStar = styled.span`
+  color: #f39c12; /* Set the color for the star */
+  margin-right: 5px;
+  font-size: 20px;
+`;
+
+const ReviewContainer = styled.div`
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+`;
+
+const ReviewMeta = styled.div`
+  font-size: 14px;
+  color: #888;
+`;
+
 const ProductDetailsPage = () => {
   const { productId } = useParams();
   const [productDetails, setProductDetails] = useState({});
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [product, setProduct] = useState(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [ratingsAndReviews, setRatingsAndReviews] = useState([]);
 
   useEffect(() => {
     fetchProductDetails();
@@ -164,6 +186,7 @@ const ProductDetailsPage = () => {
   useEffect(() => {
     if (product) {
       fetchRelatedProducts();
+      fetchRatingsAndReviews();
     }
   }, [product]);
 
@@ -196,6 +219,21 @@ const ProductDetailsPage = () => {
       }
     } catch (error) {
       console.error('Error fetching related products:', error);
+    }
+  };
+
+  const fetchRatingsAndReviews = async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/api/reviews/${productId}`);
+      const data = response.data;
+
+      if (data.reviews) {
+        setRatingsAndReviews(data.reviews);
+      } else {
+        console.error('Error fetching ratings and reviews:', data.message);
+      }
+    } catch (error) {
+      console.error('Error fetching ratings and reviews:', error);
     }
   };
 
@@ -237,10 +275,29 @@ const ProductDetailsPage = () => {
         <p>Color: {productDetails.color}</p>
         <p>Size: {productDetails.size}</p>
         <StyledPrice>Price: ${productDetails.price}</StyledPrice>
+        <p>Age Group: {productDetails.age_group}</p>
+        <p>Discount: {productDetails.discount}</p>
         <ProductDetailsButton onClick={handleBuyNow}>Buy Now</ProductDetailsButton>
         <ProductDetailsButton onClick={handleAddToCart}>
           {productDetails.inCart ? 'Remove from Cart' : 'Add to Cart'}
         </ProductDetailsButton>
+        <RatingsAndReviewsContainer>
+          <h3>Ratings and Reviews</h3>
+          {ratingsAndReviews.map((review) => (
+          <ReviewContainer key={review.review_id}>
+            <p>
+              {Array.from({ length: review.rating }, (_, index) => (
+              <RatingStar key={index}>★</RatingStar>
+              ))}
+            </p>
+            <p>{review.comment}</p>
+            <ReviewMeta>
+              <span> on {new Date(review.created_at).toLocaleDateString()}</span>
+            </ReviewMeta>
+            {/* Display other review information as needed */}
+          </ReviewContainer>
+          ))}
+        </RatingsAndReviewsContainer>
       </ProductDetailsInfo>
 
       <RelatedProductsContainer>
