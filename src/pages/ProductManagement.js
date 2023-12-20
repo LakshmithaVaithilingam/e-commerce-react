@@ -130,22 +130,6 @@ const ProductManagementTableButton = styled.button`
 
 `;
 
-const AddProductButton = styled.button`
-  background-color: #000;
-  color: #fff;
-  padding: 10px 15px;
-  font-size: 16px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-bottom: 20px;
-  transition: background-color 0.3s ease-in-out;
-
-  &:hover {
-    background-color: #333;
-  }
-`;
-
 
 const ProductManagement = () => {
   const [categories, setCategories] = useState([]);
@@ -153,7 +137,6 @@ const ProductManagement = () => {
   const [products, setProducts] = useState([]);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [formMode, setFormMode] = useState('create'); // 'create' or 'update'
-  const [showForm, setShowForm] = useState(false); // State to control form visibility
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   useEffect(() => {
@@ -224,6 +207,7 @@ const ProductManagement = () => {
       if (formMode === 'update' && selectedProduct) {
         formData.append('product_id', selectedProduct.products_id);
       }
+      
 
       // Append each file to FormData with the key 'images[]'
       for (let i = 0; i < data.images.length; i++) {
@@ -257,7 +241,6 @@ const ProductManagement = () => {
         reset(); // Reset the form after successful submission
         setFormMode('create'); // Switch back to create mode
         setSelectedProduct(null); // Clear the selected product
-        setShowForm(false); // Hide the form after successful submission
       } else {
         console.error('Invalid response from the server:', response.data);
       }
@@ -326,11 +309,6 @@ const ProductManagement = () => {
   return (
     <ProductManagementContainer>
       <ProductManagementTitle>Product Management</ProductManagementTitle>
-       {/* Add button to toggle form visibility */}
-       <AddProductButton onClick={() => setShowForm(!showForm)}>
-        {showForm ? 'Hide Form' : 'Add Product'}
-      </AddProductButton>
-      {showForm && (
       <ProductManagementForm onSubmit={handleSubmit(onSubmit)}>
         <ProductManagementFormLabel>Select Category</ProductManagementFormLabel>
         <ProductManagementFormSelect {...register('category_id', { required: true })} onChange={(e) => fetchSubcategories(e.target.value)}>
@@ -377,7 +355,6 @@ const ProductManagement = () => {
         {formMode === 'create' ? 'Create' : 'Update'}
         </ProductManagementFormButton>
       </ProductManagementForm>
-      )}
       <ProductManagementTable>
         <ProductManagementTableHead>
           <ProductManagementTableRow>
