@@ -82,6 +82,7 @@ const Form = styled.form`
     border: 1px solid #ccc;
     border-radius: 4px;
     margin-bottom: 10px;
+    width: 170px;
   }
 
   button {
@@ -114,8 +115,12 @@ const ProductsPage = () => {
   useEffect(() => {
     // Fetch the list of products when the component mounts
     fetchCategories();
-    fetchProducts();
   }, []);
+
+  useEffect(() => {
+    // Fetch the list of products when the component mounts
+    fetchProducts();
+  }, [filters]);
 
   const fetchCategories = async () => {
     try {
@@ -205,6 +210,16 @@ const ProductsPage = () => {
     fetchProducts();
   };
 
+  // Function to reset filters and fetch all products
+  const resetFilters = () => {
+    setFilters({
+      category_id: '',
+      subcategory_id: '',
+      price_min: '',
+      price_max: '',
+    });
+  };
+
   const [cart, setCart] = useState({}); // Use an object to track the cart status for each product
 
   const toggleCart = (productId) => {
@@ -266,6 +281,10 @@ const ProductsPage = () => {
         {/* Apply button */}
         <button type="button" onClick={applyFilters}>
           Apply Filters
+        </button>
+        {/* Reset button */}
+        <button type="button" onClick={resetFilters}>
+          Reset Filters
         </button>
       </Form>
       <ProductsContainer>
