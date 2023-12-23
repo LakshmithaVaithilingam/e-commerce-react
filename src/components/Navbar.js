@@ -58,6 +58,7 @@ const Navbar = () => {
         <StyledLink to="/product-management">ProductManagement</StyledLink>
         <StyledLink to="/category">Category</StyledLink>
         <StyledLink to="/subcategory">Subategory</StyledLink>
+        <StyledLink to="/Complaint">Complaint</StyledLink>
         {/* Import and render the user menu component */}
         <UserIcon src="user.jpg" alt="User" />
       </NavbarContainer>

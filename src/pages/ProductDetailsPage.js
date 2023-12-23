@@ -20,7 +20,7 @@ const ProductDetailsInfo = styled.div`
   padding: 20px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  
 `;
 
 const ProductImagesContainer = styled.div`

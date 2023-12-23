@@ -9,6 +9,9 @@ const ProductsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 20px;
+  margin: 0 auto;
+  padding: 20px;
+  
 `;
 
 const ProductCard = styled.div`
@@ -291,7 +294,7 @@ const ProductsPage = () => {
         {products.map((product) => (
           <ProductCard key={product.products_id}>
             <ProductTitle>{product.name}</ProductTitle>
-            <ProductDescription>{product.description}</ProductDescription>
+            
             <ProductPrice>Price: ${product.price}</ProductPrice>
             <Link key={product.products_id} to={`/products/${product.products_id}`}>
             <img

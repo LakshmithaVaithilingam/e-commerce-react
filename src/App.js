@@ -7,6 +7,7 @@ import Category from './pages/Category';
 import Subcategory from './pages/Subcategory';
 import Products from './pages/Products';
 import ProductDetailsPage from './pages/ProductDetailsPage';
+import Complaint from './pages/Complaint';
 
 
 // Create the App component using the page components and the routes
@@ -20,6 +21,7 @@ const App = () => {
         <Route path="/subcategory" element={<Subcategory />} />
         <Route path="/products" element={<Products />} />
         <Route path="/products/:productId" element={<ProductDetailsPage />}/>
+        <Route path="/complaint" element={<Complaint />} />
       </Routes>
     </Router>
   );
