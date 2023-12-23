@@ -18,14 +18,27 @@ const AdminComplaintTitle = styled.h1`
 `;
 
 const ComplaintCard = styled.div`
-  border: 1px solid #ccc;
-  border-radius: 5px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
   padding: 20px;
   margin-bottom: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
 `;
 
 const ComplaintDetails = styled.div`
-  margin-top: 10px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  width: 80%;
+  max-width: 600px;
 `;
 
 const ViewButton = styled.button`
@@ -44,15 +57,61 @@ const ViewButton = styled.button`
 `;
 
 const EditStatusButton = styled.button`
+  padding: 8px 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  outline: none;
+  background-color: #28a745;
+  color: #fff;
+
+  &:hover {
+    background-color: #218838;
+  }
+`;
+
+const StyledForm = styled.form`
+  margin-top: 20px;
+
+  label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    margin-bottom: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  ${EditStatusButton} {
+    display: inline-block;
+  }
+`;
+
+const CloseButton = styled.button`
   padding: 8px 12px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   outline: none;
-  background-color: #007bff;
+  margin-top: 12px;
+  background-color: #dc3545; /* Change the background color */
   color: #fff;
-  margin-left: 10px;
+  
+
+  &:hover {
+    background-color: #c82333; /* Change the hover background color accordingly */
+  }
 `;
+
+
+
+
 
 const Complaint = () => {
   const [complaints, setComplaints] = useState([]);
@@ -140,7 +199,6 @@ const Complaint = () => {
 
   return (
     <AdminComplaintContainer>
-      <AdminComplaintTitle>Admin Complaint Management</AdminComplaintTitle>
       {complaints.map((complaint) => (
         <ComplaintCard key={complaint.complaint_id}>
           <h2>Reference No: {complaint.reference_id}</h2>
@@ -163,7 +221,7 @@ const Complaint = () => {
           <p>Email Address: {selectedComplaint.user ? selectedComplaint.user.email : 'N/A'}</p>
           <p>Complaint Description: {selectedComplaint.description}</p>
           <p>Status: {selectedComplaint.status}</p>
-          <form onSubmit={handleSubmit(handleEditStatus)}>
+          <StyledForm onSubmit={handleSubmit(handleEditStatus)}>
             <label htmlFor="status">Edit Status:</label>
             <select
               id="status"
@@ -175,8 +233,8 @@ const Complaint = () => {
               <option value="resolved">Resolved</option>
             </select>
             <EditStatusButton type="submit">Save</EditStatusButton>
-          </form>
-          <button onClick={() => setSelectedComplaint(null)}>Close</button>
+          </StyledForm>
+          <CloseButton onClick={() => setSelectedComplaint(null)}>Close</CloseButton>
         </ComplaintDetails>
       )}
     </AdminComplaintContainer>
